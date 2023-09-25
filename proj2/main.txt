@@ -3,16 +3,16 @@ resource "aws_vpc" "myvpc" {
 
 }
 resource "aws_subnet" "sub1" {
-    vpc_id = aws_vpc.myvpc
+    vpc_id = aws_vpc.myvpc.id
     cidr_block = "10.0.0.0/24"
     availability_zone = "us-east-1a"
-    map_customer_owned_ip_on_launch = true
+    map_public_ip_on_launch = true
 }
 resource "aws_subnet" "sub2" {
-    vpc_id = aws_vpc.myvpc
+    vpc_id = aws_vpc.myvpc.id
     cidr_block = "10.0.1.0/24"
     availability_zone = "us-east-1b"
-    map_customer_owned_ip_on_launch = true
+    map_public_ip_on_launch = true
 }
 resource "aws_internet_gateway" "myigw" {
     vpc_id = aws_vpc.myvpc.id
@@ -20,7 +20,7 @@ resource "aws_internet_gateway" "myigw" {
 }
 
 resource "aws_route_table" "RT" {
-    vpc_id = aws_vpc.myvpc
+    vpc_id = aws_vpc.myvpc.id
 
     route {
         cidr_block = "0.0.0.0/0"
@@ -34,7 +34,7 @@ resource "aws_route_table_association" "rta1" {
 
 }
 resource "aws_route_table_association" "rta2" {
-    subnet_id = aws_subnet.sub2
+    subnet_id = aws_subnet.sub2.id
     route_table_id = aws_route_table.RT.id
 
 }
@@ -61,9 +61,6 @@ resource "aws_security_group" "websg" {
         to_port = 0
         protocol = "-1"
         cidr_blocks = ["0.0.0.0/0"]
-    }
-    tags {
-        name = "web-sg"
     }
 }
 resource "aws_s3_bucket" "example" {
@@ -113,7 +110,7 @@ resource "aws_lb_target_group" "tg" {
 
     health_check {
       path = "/"
-      port = "traffic port"
+      port = "traffic-port"
 
     }
 }
